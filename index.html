@@ -122,7 +122,7 @@ input.in:focus{outline:none;border-color:var(--amber)}
 .wave span:nth-child(2n){background:var(--amber);box-shadow:0 0 8px var(--amber)}
 @keyframes wv{0%,100%{height:18%}50%{height:100%}}
 .narr{font-family:var(--disp);font-weight:300;font-size:5.6cqw;line-height:1.4;color:var(--white);max-width:330px;text-align:center;text-shadow:0 2px 14px #000}
-.assembly-list{width:100%;max-width:380px;margin:20px auto;list-style:none}
+.assembly-list{width:100%;max-width:380px;margin:20px auto;list-style:none;max-height:52cqh;overflow-y:auto}
 .assembly-list li{display:flex;justify-content:space-between;align-items:center;padding:15px 8px;border-bottom:1px solid rgba(150,168,178,.18);font-size:15px;letter-spacing:1px}
 .wintitle{font-family:var(--disp);font-weight:300;letter-spacing:.16em;font-size:7.6cqw;text-transform:uppercase;text-shadow:0 2px 20px #000;margin-bottom:8px}
 .reveal{opacity:0;animation:rise .6s ease forwards}
@@ -152,7 +152,7 @@ input.in:focus{outline:none;border-color:var(--amber)}
 .scanname{font-family:var(--disp);font-size:7cqw;color:var(--white)}
 .scanverdict{font-family:var(--disp);font-weight:600;font-size:13cqw;letter-spacing:.1em;margin-top:6px}
 .dead-name{font-family:var(--disp);font-weight:300;font-size:8cqw;color:var(--danger);text-shadow:0 2px 14px #000;margin:4px 0}
-.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px auto;max-width:340px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px auto;max-width:340px;max-height:30cqh;overflow-y:auto}
 .chip{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:5px 9px;border:1px solid rgba(150,168,178,.3);color:var(--mute)}
 .reveal-list{list-style:none;width:100%;max-width:340px;margin:14px auto;max-height:32cqh;overflow-y:auto}
 .reveal-list li{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid rgba(150,168,178,.16);font-size:12px;letter-spacing:.5px}
@@ -200,7 +200,7 @@ input.in:focus{outline:none;border-color:var(--amber)}
       <div class="panel reveal d2" style="margin-top:22px">
         <div class="row"><input class="in" id="cname" placeholder="Name eingeben" maxlength="14" onkeydown="if(event.key==='Enter')addCrew()"><button class="add" onclick="addCrew()">+</button></div>
         <ul class="clist" id="clist"></ul>
-        <div class="count">CREW: <b id="ccount">0</b> / <span id="cmax">12</span> &nbsp;&middot;&nbsp; min. 5</div>
+        <div class="count">CREW: <b id="ccount">0</b> / <span id="cmax">6</span> &nbsp;&middot;&nbsp; min. 5</div>
         <div id="opts" style="margin-bottom:12px"></div>
         <div id="variants" style="margin-bottom:12px"></div>
         <button class="btn" id="dealbtn" onclick="startDeal()" disabled>Rollen verteilen</button>
@@ -301,13 +301,13 @@ function renderCrew(){
   crew.forEach(function(n,i){ var li=document.createElement('li');
     li.innerHTML='<span>'+escape2(n)+'</span><span class="x" onclick="rmCrew('+i+')">&#10005;</span>'; ul.appendChild(li); });
   document.getElementById('ccount').textContent=crew.length;
-  document.getElementById('dealbtn').disabled=(crew.length<5||(crew.length>12&&!unlocked.biggroup));
-  var cm=document.getElementById('cmax'); if(cm)cm.textContent=unlocked.biggroup?'\u221e':'12';
+  document.getElementById('dealbtn').disabled=(crew.length<5||(crew.length>6&&!unlocked.biggroup));
+  var cm=document.getElementById('cmax'); if(cm)cm.textContent=unlocked.biggroup?'\u221e':'6';
 }
 function addCrew(){ var inp=document.getElementById('cname'); var v=inp.value.trim();
   if(!v){ inp.focus(); return; }
-  if(crew.length>=7 && !unlocked.biggroup){ showPaywall('biggroup'); return; }
-  if(unlocked.biggroup||crew.length<12){ crew.push(v); inp.value=''; renderCrew(); } inp.focus(); }
+  if(crew.length>=6 && !unlocked.biggroup){ showPaywall('biggroup'); return; }
+  if(unlocked.biggroup||crew.length<6){ crew.push(v); inp.value=''; renderCrew(); } inp.focus(); }
 function rmCrew(i){ crew.splice(i,1); renderCrew(); }
 function escape2(s){ return s.replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
 /* ===== AUDIO ===== */
@@ -448,7 +448,7 @@ function dealNext(){
 }
 function afterDeal(){ screenNightIntro(); }
 function screenPact(){ var na=G.players.filter(function(p){return p.role==='alien';}).length; var key,sub,fb; if(na>=2){ key=setupOpts.pairReveal?'pakt_gegenseitig':'pakt_einseitig'; if(!voiceDur(key))key='pakt_erkennung'; sub='Folgt der Ansage Schritt f\u00fcr Schritt.'; fb=setupOpts.pairReveal?'Alle schlie\u00dfen die Augen. Aliens, \u00f6ffnet die Augen und erkennt einander. Dann schlie\u00dft die Augen. Kollaborateur und Aliens, \u00f6ffnet die Augen und erkennt einander. Dann schlie\u00dfen alle die Augen.':'Alle schlie\u00dfen die Augen. Aliens, \u00f6ffnet die Augen und erkennt einander. Dann schlie\u00dft die Augen. Kollaborateur, \u00f6ffne die Augen; die Aliens heben die Hand, damit du sie erkennst. Dann schlie\u00dfen alle die Augen.'; } else { key='pakt_erkennung'; sub='Alle Augen schlie\u00dfen.<br>Alien und Kollaborateur \u2014 \u00f6ffnet die Augen und erkennt einander.'; fb='Alien und Kollaborateur, \u00f6ffnet die Augen und erkennt einander. Dann schlie\u00dft die Augen wieder.'; } runCalm({secs:10,lead:3,key:key,title:'Der Pakt',sub:sub,fallback:fb,next:beginNight}); }
-var PRICE={medic:'Medic',marine:'Marine',android:'Androide',biggroup:'Gro\u00dfe Crew (8\u201312 Spieler)'};
+var PRICE={medic:'Medic',marine:'Marine',android:'Androide',biggroup:'Gro\u00dfe Crew (ab 7 Spieler)'};
 function renderOpts(){
   var defs=[['medic','Medic','Heilen & Vergiften'],['marine','Marine','Totmann-Schuss'],['android','Androide','Schutz-Protokoll']];
   var el=document.getElementById('opts'); if(!el)return;
